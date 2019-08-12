@@ -1,6 +1,7 @@
 #include QMK_KEYBOARD_H
 #include "keymap_bepo.h"
 #include "keymap_french.h"
+#include "print.h"
 
 // keymaps
 #define BEPO 0	// default layer, for bepo compatible systems
@@ -17,7 +18,6 @@
 #define KP_00 0	// keypad "double 0"
 
 enum custom_keycodes {
-  RGB_SLD = EZ_SAFE_RANGE,
   EPRM,
 };
 
