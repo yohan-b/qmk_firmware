@@ -21,6 +21,8 @@ enum custom_keycodes {
   EPRM,
 };
 
+bool base_layer_is_bepo = true;
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Keymap 0: default layer
  *
@@ -385,46 +387,62 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 uint32_t layer_state_set_user(uint32_t state) {
   uint8_t layer = biton32(state);
-  ergodox_board_led_off();
-  ergodox_right_led_1_off();
   ergodox_right_led_2_off();
   ergodox_right_led_3_off();
   switch (layer) {
-    case 1:
-      ergodox_right_led_1_on();
-      uprintf("layer:1\n");
-      break;
-    case 2:
-      ergodox_right_led_2_on();
-      uprintf("layer:2\n");
-      break;
-    case 3:
-      ergodox_right_led_3_on();
-      uprintf("layer:3\n");
-      break;
-    case 4:
-      ergodox_right_led_1_on();
-      ergodox_right_led_2_on();
-      uprintf("layer:4\n");
-      break;
-    case 5:
-      ergodox_right_led_1_on();
-      ergodox_right_led_3_on();
-      uprintf("layer:5\n");
-      break;
-    case 6:
-      ergodox_right_led_2_on();
-      ergodox_right_led_3_on();
-      uprintf("layer:6\n");
-      break;
     case 7:
-      ergodox_right_led_1_on();
-      ergodox_right_led_2_on();
       ergodox_right_led_3_on();
       uprintf("layer:7\n");
+      break;
+    case 8:
+      ergodox_right_led_2_on();
+      uprintf("layer:8\n");
       break;
     default:
       break;
   }
   return state;
+};
+
+uint32_t default_layer_state_set_user(uint32_t state) {
+  uint8_t layer = biton32(state);
+  ergodox_right_led_1_off();
+  switch (layer) {
+    case 0:
+      uprintf("default layer:0\n");
+      base_layer_is_bepo = true;
+      break;
+    case 1:
+      ergodox_right_led_1_on();
+      uprintf("default layer:1\n");
+      base_layer_is_bepo = false;
+      break;
+    case 4:
+      ergodox_right_led_1_on();
+      uprintf("default layer:4\n");
+      base_layer_is_bepo = false;
+      break;
+    default:
+      break;
+  }
+  return state;
+};
+
+// Runs constantly in the background, in a loop.
+void led_set_user(uint8_t usb_led) {
+    if (! base_layer_is_bepo) {
+        ergodox_right_led_1_on();
+    }
+    else if (usb_led & (1<<USB_LED_NUM_LOCK)) {
+        ergodox_right_led_1_on();
+    }
+    else if (usb_led & (1<<USB_LED_CAPS_LOCK)) {
+        ergodox_right_led_1_on();
+    }
+    else if (usb_led & (1<<USB_LED_SCROLL_LOCK)) {
+        ergodox_right_led_1_on();
+    }
+    else {
+        ergodox_right_led_1_off();
+    }
 };
