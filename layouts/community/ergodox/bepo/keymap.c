@@ -16,6 +16,11 @@
 // macros
 #define KP_00 0	// keypad "double 0"
 
+enum custom_keycodes {
+  RGB_SLD = EZ_SAFE_RANGE,
+  EPRM,
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Keymap 0: default layer
  *
@@ -287,7 +292,7 @@ KC_TRNS,	KC_TRNS,	KC_TRNS),
  * |--------+------+------+------+------+------| VolUp|                                  |      |------+------+------+------+------+--------|
  * |        | Undo |  Cut | Copy | Paste|      |      |                                  |      |      |      |      |      |      |        |
  * `--------+------+------+------+------+-------------,-------------.      ,-------------`-------------+------+------+------+------+--------'
- *   |      |      |      |      |      |             |      |      |      |      |      |             |      |      |      |      |      |
+ *   |      |      |      |      |      |             |      |      |      |      |      |             |      |      |      |      | RESET |
  *   `----------------------------------'      ,------|------|------|      |------+------+------.      `----------------------------------'
  *                                             |      |      |      |      |      |      |      |
  *                                             |      |      |------|      |------|      |      |
@@ -309,7 +314,7 @@ KC_NO,		KC_NO,		KC_TRNS,	KC_TRNS,	KC_TRNS,
 				KC_NO,		KC_PGUP,	KC_HOME,	KC_UP,		KC_END,		KC_F11,		KC_NO,
 						KC_PGDOWN,	KC_LEFT,	KC_DOWN,	KC_RIGHT,	KC_F12,		KC_NO,
 				KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,		KC_NO,
-								KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_NO,		KC_NO,
+								KC_TRNS,	KC_TRNS,	KC_TRNS,	KC_NO,		RESET,
 KC_TRNS,	KC_TRNS,
 KC_TRNS,
 KC_TRNS,	KC_TRNS,	KC_NO),
@@ -365,4 +370,61 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
       break;
   }
   return MACRO_NONE;
+};
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  switch (keycode) {
+    case EPRM:
+      if (record->event.pressed) {
+        eeconfig_init();
+      }
+      return false;
+  }
+  return true;
+}
+
+uint32_t layer_state_set_user(uint32_t state) {
+  uint8_t layer = biton32(state);
+  ergodox_board_led_off();
+  ergodox_right_led_1_off();
+  ergodox_right_led_2_off();
+  ergodox_right_led_3_off();
+  switch (layer) {
+    case 1:
+      ergodox_right_led_1_on();
+      uprintf("layer:1\n");
+      break;
+    case 2:
+      ergodox_right_led_2_on();
+      uprintf("layer:2\n");
+      break;
+    case 3:
+      ergodox_right_led_3_on();
+      uprintf("layer:3\n");
+      break;
+    case 4:
+      ergodox_right_led_1_on();
+      ergodox_right_led_2_on();
+      uprintf("layer:4\n");
+      break;
+    case 5:
+      ergodox_right_led_1_on();
+      ergodox_right_led_3_on();
+      uprintf("layer:5\n");
+      break;
+    case 6:
+      ergodox_right_led_2_on();
+      ergodox_right_led_3_on();
+      uprintf("layer:6\n");
+      break;
+    case 7:
+      ergodox_right_led_1_on();
+      ergodox_right_led_2_on();
+      ergodox_right_led_3_on();
+      uprintf("layer:7\n");
+      break;
+    default:
+      break;
+  }
+  return state;
 };
