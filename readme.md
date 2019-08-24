@@ -1,3 +1,6 @@
+# This fork contains a modified Bepo layout.
+# Amongst other things, alt+Fn and alt+tab are easier to do.
+
 # Quantum Mechanical Keyboard Firmware
 
 [![Current Version](https://img.shields.io/github/tag/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/tags)
